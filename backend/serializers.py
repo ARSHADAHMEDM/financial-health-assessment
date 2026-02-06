@@ -2,9 +2,6 @@ import numpy as np
 
 
 def to_native(value):
-    """
-    Convert numpy / pandas types to native Python types.
-    """
     if isinstance(value, (np.integer,)):
         return int(value)
     if isinstance(value, (np.floating,)):
@@ -17,7 +14,4 @@ def to_native(value):
 
 
 def serialize_response(data: dict) -> dict:
-    """
-    Fully serialize nested response data.
-    """
     return to_native(data)
