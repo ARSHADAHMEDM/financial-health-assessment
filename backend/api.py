@@ -1,12 +1,12 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 import pandas as pd
 import io
-from serializers import serialize_response
-from analysis import load_financial_data, compute_financial_metrics
-from scoring import calculate_health_score
-from ai_insights import generate_ai_insights
-from stress_test import apply_revenue_shock
-from llm_explainer import explain_stress_with_llm
+from backend.serializers import serialize_response
+from backend.analysis import compute_financial_metrics
+from backend.scoring import calculate_health_score
+from backend.ai_insights import generate_ai_insights
+from backend.stress_test import apply_revenue_shock
+from backend.llm_explainer import explain_stress_with_llm
 
 app = FastAPI(
     title="Financial Health Assessment API",
