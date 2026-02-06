@@ -1,9 +1,5 @@
-fastapi → API framework
-
-uvicorn → server
-
-pandas, numpy → financial analysis
-
-python-multipart → CSV upload
-
-groq → Grok LLM
+fastapi
+uvicorn
+pandas
+numpy
+python-multipart
