@@ -1,81 +1,63 @@
 def calculate_health_score(metrics: dict) -> dict:
-    """
-    Calculate explainable Financial Health Score (0–100).
-    """
+    score = 0
+    breakdown = {}
 
-    breakdown = {
-        "profitability": {
-            "score": 0,
-            "reason": ""
-        },
-        "liquidity": {
-            "score": 0,
-            "reason": ""
-        },
-        "debt": {
-            "score": 0,
-            "reason": ""
+    # Profitability
+    if metrics["profit_margin"] > 0.2:
+        breakdown["profitability"] = {
+            "score": 40,
+            "reason": "Strong profit margins",
         }
-    }
-
-    total_score = 0
-
-    # 1️⃣ Profitability (40 points)
-    pm = metrics["profit_margin"]
-    if pm > 0.20:
-        breakdown["profitability"]["score"] = 40
-        breakdown["profitability"]["reason"] = "Strong profit margins"
-    elif pm > 0.10:
-        breakdown["profitability"]["score"] = 30
-        breakdown["profitability"]["reason"] = "Moderate profit margins"
-    elif pm > 0:
-        breakdown["profitability"]["score"] = 20
-        breakdown["profitability"]["reason"] = "Low but positive profitability"
+        score += 40
+    elif metrics["profit_margin"] > 0:
+        breakdown["profitability"] = {
+            "score": 20,
+            "reason": "Moderate profitability",
+        }
+        score += 20
     else:
-        breakdown["profitability"]["reason"] = "Business is not profitable"
+        breakdown["profitability"] = {
+            "score": 0,
+            "reason": "Unprofitable business",
+        }
 
-    total_score += breakdown["profitability"]["score"]
-
-    # 2️⃣ Liquidity (30 points)
-    cr = metrics["current_ratio"]
-    if cr > 1.5:
-        breakdown["liquidity"]["score"] = 30
-        breakdown["liquidity"]["reason"] = "Healthy liquidity position"
-    elif cr > 1.0:
-        breakdown["liquidity"]["score"] = 20
-        breakdown["liquidity"]["reason"] = "Adequate liquidity"
-    elif cr > 0.75:
-        breakdown["liquidity"]["score"] = 10
-        breakdown["liquidity"]["reason"] = "Tight liquidity"
+    # Liquidity
+    if metrics["current_ratio"] >= 1.5:
+        breakdown["liquidity"] = {
+            "score": 30,
+            "reason": "Healthy liquidity",
+        }
+        score += 30
+    elif metrics["current_ratio"] >= 1:
+        breakdown["liquidity"] = {
+            "score": 15,
+            "reason": "Adequate liquidity",
+        }
+        score += 15
     else:
-        breakdown["liquidity"]["reason"] = "Liquidity stress detected"
+        breakdown["liquidity"] = {
+            "score": 0,
+            "reason": "Liquidity stress detected",
+        }
 
-    total_score += breakdown["liquidity"]["score"]
-
-    # 3️⃣ Debt (30 points)
-    avg_loan = metrics["avg_loan_outstanding"]
-    total_revenue = metrics["total_revenue"]
-
-    if avg_loan < total_revenue * 0.5:
-        breakdown["debt"]["score"] = 30
-        breakdown["debt"]["reason"] = "Low debt burden"
-    elif avg_loan < total_revenue:
-        breakdown["debt"]["score"] = 20
-        breakdown["debt"]["reason"] = "Moderate debt exposure"
+    # Debt
+    if metrics["avg_loan_outstanding"] < metrics["total_revenue"] * 0.5:
+        breakdown["debt"] = {
+            "score": 30,
+            "reason": "Low debt burden",
+        }
+        score += 30
     else:
-        breakdown["debt"]["score"] = 10
-        breakdown["debt"]["reason"] = "High debt burden"
+        breakdown["debt"] = {
+            "score": 10,
+            "reason": "High debt exposure",
+        }
+        score += 10
 
-    total_score += breakdown["debt"]["score"]
-
-    # Primary risk identification
-    primary_risk = min(
-        breakdown,
-        key=lambda k: breakdown[k]["score"]
-    )
+    primary_risk = min(breakdown, key=lambda x: breakdown[x]["score"])
 
     return {
-        "total_score": min(total_score, 100),
+        "total_score": score,
         "breakdown": breakdown,
-        "primary_risk": primary_risk
+        "primary_risk": primary_risk,
     }
